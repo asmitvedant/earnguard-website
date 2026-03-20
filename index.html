@@ -1,13 +1,22 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>EarnGuard AI – Adaptive Hyperlocal Prophet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>EarnGuard AI – Hyperlocal Prophet | Next‑Gen Parametric Protection</title>
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js & Three.js for insane 3D background -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+      }
+    }
+  </script>
   <style>
     * {
       margin: 0;
@@ -17,40 +26,32 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at 20% 30%, #0a0f1c, #03060f);
+      background: #050a15;
       color: #f0f3fa;
-      min-height: 100vh;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* floating particles background */
-    .particle {
+    /* 3D canvas background */
+    #bg-canvas {
       position: fixed;
-      background: rgba(0,122,255,0.3);
-      border-radius: 50%;
-      pointer-events: none;
-      filter: blur(5px);
-      animation: floatParticle linear infinite;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
-    }
-
-    @keyframes floatParticle {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      20% { opacity: 0.5; }
-      80% { opacity: 0.5; }
-      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+      pointer-events: none;
     }
 
     .app-container {
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
       padding: 24px;
       position: relative;
-      z-index: 2;
+      z-index: 10;
     }
 
-    /* glassmorphic header */
+    /* glass header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -58,11 +59,12 @@
       margin-bottom: 32px;
       flex-wrap: wrap;
       gap: 20px;
-      background: rgba(15, 25, 45, 0.5);
-      backdrop-filter: blur(20px);
+      background: rgba(10, 20, 40, 0.55);
+      backdrop-filter: blur(12px);
       border-radius: 80px;
       padding: 12px 28px;
-      border: 1px solid rgba(0,122,255,0.3);
+      border: 1px solid rgba(0, 200, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 200, 255, 0.2);
     }
     .logo {
       display: flex;
@@ -70,56 +72,64 @@
       gap: 14px;
     }
     .logo i {
-      font-size: 40px;
-      color: #007aff;
-      filter: drop-shadow(0 0 8px #007aff);
+      font-size: 42px;
+      color: #0af;
+      filter: drop-shadow(0 0 12px #0af);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { text-shadow: 0 0 0 #0af; }
+      50% { text-shadow: 0 0 10px #0af; }
+      100% { text-shadow: 0 0 0 #0af; }
     }
     .logo h1 {
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #fff, #7aa2f7);
+      background: linear-gradient(135deg, #fff, #0af);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
+
     .role-switch {
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
       border-radius: 60px;
       padding: 5px;
       display: flex;
       gap: 8px;
+      border: 1px solid rgba(0,170,255,0.5);
     }
     .role-btn {
       padding: 10px 28px;
       border-radius: 40px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       background: transparent;
       border: none;
       color: #ccc;
-      transition: all 0.2s;
+      transition: 0.2s;
     }
     .role-btn.active {
-      background: #007aff;
-      color: white;
-      box-shadow: 0 0 12px #007aff;
+      background: #0af;
+      color: #000;
+      box-shadow: 0 0 12px #0af;
     }
 
     /* cards */
     .card {
-      background: rgba(20, 30, 55, 0.6);
-      backdrop-filter: blur(16px);
+      background: rgba(15, 25, 45, 0.7);
+      backdrop-filter: blur(20px);
       border-radius: 48px;
       padding: 28px;
-      border: 1px solid rgba(0,122,255,0.25);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      transition: transform 0.25s ease, box-shadow 0.25s;
+      border: 1px solid rgba(0,170,255,0.3);
+      transition: all 0.3s ease;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.4);
     }
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 30px 50px rgba(0,122,255,0.15);
-      border-color: rgba(0,122,255,0.5);
+      border-color: #0af;
+      box-shadow: 0 0 30px rgba(0,170,255,0.2);
     }
 
     .grid-2col {
@@ -132,9 +142,9 @@
       .grid-2col { grid-template-columns: 1fr; }
     }
 
-    /* risk grid */
+    /* risk grid 5x5 with neon effect */
     .risk-grid-container {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.4);
       border-radius: 36px;
       padding: 20px;
       margin-top: 20px;
@@ -142,7 +152,7 @@
     .risk-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: 12px;
     }
     .grid-cell {
       aspect-ratio: 1;
@@ -150,38 +160,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 0.75rem;
+      font-weight: 800;
+      font-size: 0.85rem;
       transition: all 0.2s ease;
       cursor: pointer;
-      background: rgba(255,255,255,0.1);
+      background: rgba(20,30,50,0.8);
       backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .risk-high { background: #ff3b30; box-shadow: 0 0 12px #ff3b30; }
-    .risk-medium { background: #ff9500; }
-    .risk-low { background: #34c759; }
+    .risk-high { background: #ff3b30; box-shadow: 0 0 12px #ff3b30; text-shadow: 0 0 4px black; }
+    .risk-medium { background: #ff9500; box-shadow: 0 0 8px #ff9500; }
+    .risk-low { background: #34c759; box-shadow: 0 0 6px #34c759; }
 
     /* trust score */
     .trust-section {
-      background: rgba(0,122,255,0.2);
-      border-radius: 32px;
+      background: rgba(0,170,255,0.15);
+      border-radius: 40px;
       padding: 20px;
       text-align: center;
-      border: 1px solid rgba(0,122,255,0.5);
+      border: 1px solid #0af;
+      backdrop-filter: blur(8px);
     }
     .trust-value {
-      font-size: 3.4rem;
+      font-size: 4rem;
       font-weight: 800;
-      color: #00ffaa;
-      text-shadow: 0 0 10px #00ffaa;
+      color: #0ff;
+      text-shadow: 0 0 20px #0ff;
     }
 
-    /* alerts & payouts */
     .alert-item, .payout-item {
       display: flex;
       justify-content: space-between;
       padding: 12px 0;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
     }
     .alert-time {
       font-size: 0.7rem;
@@ -189,20 +201,20 @@
     }
 
     button {
-      background: linear-gradient(135deg, #007aff, #5856d6);
+      background: linear-gradient(135deg, #0af, #0066cc);
       border: none;
       padding: 14px 24px;
       border-radius: 60px;
       color: white;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       font-size: 0.9rem;
-      box-shadow: 0 4px 12px rgba(0,122,255,0.4);
+      box-shadow: 0 4px 12px rgba(0,170,255,0.4);
     }
     button:hover {
       transform: scale(0.97);
-      box-shadow: 0 2px 8px rgba(0,122,255,0.6);
+      box-shadow: 0 0 15px #0af;
     }
 
     .profile-card {
@@ -212,20 +224,20 @@
       margin-bottom: 20px;
     }
     .avatar {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(145deg, #007aff, #5e5ce0);
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(145deg, #0af, #2c3e66);
       border-radius: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0,122,255,0.5);
+      font-size: 2.2rem;
+      font-weight: 800;
+      box-shadow: 0 0 20px #0af;
     }
 
     .signal-panel {
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.5);
       border-radius: 32px;
       padding: 20px;
       margin-top: 20px;
@@ -256,447 +268,527 @@
       z-index: 2000;
       font-weight: 500;
       animation: slideIn 0.3s ease;
-      border-left: 4px solid #007aff;
+      border-left: 4px solid #0af;
+      font-weight: 600;
     }
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
 
-    /* extra floating badge */
-    .floating-badge {
-      position: absolute;
-      top: 20%;
-      right: 2%;
-      background: rgba(0,122,255,0.3);
-      backdrop-filter: blur(12px);
-      border-radius: 60px;
-      padding: 8px 16px;
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      box-shadow: none;
+    }
+    .badge {
+      background: #0af;
+      border-radius: 40px;
+      padding: 4px 12px;
       font-size: 0.7rem;
-      z-index: 3;
-      pointer-events: none;
-      border: 1px solid #007aff;
+      font-weight: 700;
+    }
+
+    /* animated pulse for fraud ring */
+    .fraud-ring {
+      background: rgba(255,0,0,0.3);
+      animation: blink 1s infinite;
+      border-radius: 20px;
+      padding: 6px 12px;
+      margin: 5px 0;
+    }
+    @keyframes blink {
+      0% { background: rgba(255,0,0,0.3); }
+      50% { background: rgba(255,0,0,0.7); }
+      100% { background: rgba(255,0,0,0.3); }
     }
   </style>
 </head>
 <body>
-
-<!-- floating particles -->
-<div id="particles"></div>
-
-<div class="app-container">
-  <div class="header">
-    <div class="logo">
-      <i class="fas fa-shield-haltered"></i>
-      <h1>EarnGuard AI</h1>
+  <canvas id="bg-canvas"></canvas>
+  <div class="app-container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-shield-haltered"></i>
+        <h1>EarnGuard AI</h1>
+      </div>
+      <div class="role-switch">
+        <button class="role-btn active" data-role="worker">👤 Worker Core</button>
+        <button class="role-btn" data-role="admin">📊 Neural Admin</button>
+      </div>
     </div>
-    <div class="role-switch">
-      <button class="role-btn active" data-role="worker">👤 Worker</button>
-      <button class="role-btn" data-role="admin">📊 Admin</button>
-    </div>
-  </div>
 
-  <!-- Worker Dashboard -->
-  <div id="workerView">
-    <div class="grid-2col">
-      <!-- left column -->
-      <div class="card">
-        <div class="profile-card">
-          <div class="avatar">A</div>
-          <div>
-            <h2>Arjun S.</h2>
-            <p><i class="fas fa-map-marker-alt"></i> Zomato • Mumbai | Pro Plan</p>
-            <div style="display: flex; gap: 12px; margin-top: 8px;">
-              <span><i class="fas fa-star"></i> 4.9 rating</span>
-              <span><i class="fas fa-bolt"></i> 1,247 deliveries</span>
+    <!-- Worker Dashboard -->
+    <div id="workerView">
+      <div class="grid-2col">
+        <div class="card">
+          <div class="profile-card">
+            <div class="avatar">A</div>
+            <div>
+              <h2>Arjun Sharma</h2>
+              <p><i class="fas fa-map-marker-alt"></i> Zomato • Mumbai | Pro Tier</p>
+              <div style="display: flex; gap: 16px; margin-top: 10px;">
+                <span><i class="fas fa-star"></i> 4.97 rating</span>
+                <span><i class="fas fa-bolt"></i> 1,432 deliveries</span>
+                <span><i class="fas fa-calendar-week"></i> Active: 94d</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="risk-grid-container">
-          <div style="display: flex; justify-content: space-between;">
-            <h3><i class="fas fa-globe"></i> Adaptive Hyperlocal Grid</h3>
-            <span id="globalRiskBadge" class="badge" style="background:#ff3b30;">Risk: 0.62</span>
+          <div class="risk-grid-container">
+            <div style="display: flex; justify-content: space-between;">
+              <h3><i class="fas fa-globe"></i> Hyperlocal Risk Matrix</h3>
+              <span id="globalRiskBadge" class="badge">Risk: 0.62</span>
+            </div>
+            <div id="riskGrid" class="risk-grid"></div>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+              <span><i class="fas fa-chart-line"></i> Disruption prob: <strong id="riskPercent">62%</strong></span>
+              <span><i class="fas fa-coins"></i> Weekly premium: <strong id="premiumAmount">₹36</strong></span>
+            </div>
+            <div class="controls">
+              <button id="simulateRainBtn" class="btn-secondary"><i class="fas fa-cloud-rain"></i> Flood Pulse</button>
+              <button id="toggleGridBtn" class="btn-secondary"><i class="fas fa-vector-square"></i> Adaptive View</button>
+            </div>
           </div>
-          <div id="riskGrid" class="risk-grid"></div>
-          <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-            <span><i class="fas fa-chart-line"></i> Disruption prob: <strong id="riskPercent">62%</strong></span>
-            <span><i class="fas fa-coins"></i> Weekly premium: <strong id="premiumAmount">₹36</strong></span>
+          <div class="signal-panel">
+            <div><i class="fas fa-fingerprint"></i> Anti‑Spoofing Sentinel (14 signals live)</div>
+            <div class="signal-grid" id="signalGrid"></div>
           </div>
         </div>
-        <div class="signal-panel">
-          <div><i class="fas fa-fingerprint"></i> Anti‑Spoofing Shield (14+ signals)</div>
-          <div class="signal-grid" id="signalGrid"></div>
+
+        <div class="card">
+          <div class="trust-section">
+            <div>Trust Score</div>
+            <div class="trust-value" id="trustScore">89</div>
+            <div id="trustDesc" style="font-size:0.8rem;">✅ Auto‑approval</div>
+          </div>
+          <div class="controls" style="margin: 20px 0 0;">
+            <button id="reportBtn" style="flex:1"><i class="fas fa-flag"></i> Report Disruption</button>
+            <button id="toggleAlertsBtn" class="btn-secondary" style="flex:1"><i class="fas fa-bell-slash"></i> Mute Alerts</button>
+          </div>
+          <div style="margin-top: 20px;">
+            <h3><i class="fas fa-bell"></i> Neural Alerts</h3>
+            <div id="alertList" style="max-height: 240px; overflow-y: auto;"></div>
+          </div>
+          <div style="margin-top: 24px;">
+            <h3><i class="fas fa-history"></i> Instant Payout Log</h3>
+            <div id="payoutList" style="max-height: 200px; overflow-y: auto;"></div>
+          </div>
         </div>
       </div>
 
-      <!-- right column -->
-      <div class="card">
-        <div class="trust-section">
-          <div>Trust Score</div>
-          <div class="trust-value" id="trustScore">89</div>
-          <div id="trustDesc" style="font-size:0.8rem;">✅ Auto‑approval</div>
+      <div class="grid-2col">
+        <div class="card">
+          <h3><i class="fas fa-chart-line"></i> AI Earnings Forecast (7‑Day Horizon)</h3>
+          <canvas id="earningsChart" height="180" style="width:100%; max-height:200px;"></canvas>
+          <div class="controls" style="margin-top: 16px;">
+            <div><i class="fas fa-cloud-sun-rain"></i> Risk‑adjusted prediction: <strong id="forecastNote">-8% tomorrow</strong></div>
+          </div>
         </div>
-        <div style="display: flex; gap: 12px; margin: 20px 0;">
-          <button id="reportBtn" style="flex:1"><i class="fas fa-flag"></i> Report Disruption</button>
-          <button id="simulateRainBtn" style="flex:1; background: #ff9500;"><i class="fas fa-cloud-rain"></i> Simulate Rain</button>
-        </div>
-        <div>
-          <h3><i class="fas fa-bell"></i> Live Alerts</h3>
-          <div id="alertList" style="max-height: 220px; overflow-y: auto;"></div>
-        </div>
-        <div style="margin-top: 24px;">
-          <h3><i class="fas fa-history"></i> Recent Payouts</h3>
-          <div id="payoutList" style="max-height: 220px; overflow-y: auto;"></div>
+        <div class="card">
+          <h3><i class="fas fa-chart-simple"></i> Live Syndicate Radar</h3>
+          <div id="syndicateRadar" style="height: 150px; position: relative; margin-top: 12px;">
+            <canvas id="radarCanvas" width="300" height="150" style="width:100%; height:auto;"></canvas>
+          </div>
+          <div style="margin-top: 16px;">
+            <div>🛡️ Fraud prevented this month: <strong id="fraudSavings">₹45,200</strong></div>
+            <div>🔒 Real‑time trust integrity: <span id="trustIntegrity">99.2%</span></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- earnings predictor chart -->
-    <div class="card">
-      <h3><i class="fas fa-chart-line"></i> AI Earnings Predictor (next 7 days)</h3>
-      <canvas id="earningsChart" height="180" style="width:100%; max-height:200px;"></canvas>
-      <div class="floating-badge" style="position: relative; margin-top: 12px; text-align: center;">📈 Based on weather + historical pattern</div>
+    <!-- Admin Dashboard (hidden initially) -->
+    <div id="adminView" style="display: none;">
+      <div class="grid-2col">
+        <div class="card">
+          <h3><i class="fas fa-chart-line"></i> Claims & Loss Ratio</h3>
+          <canvas id="claimsChart" height="180" style="width:100%; max-height:200px;"></canvas>
+          <div style="margin-top: 20px;">
+            <div>Today's claims: <strong id="claimsToday">0</strong></div>
+            <div>Fraud prevented: <strong id="fraudPrevented">₹0</strong></div>
+            <div>Loss ratio (7d): <strong id="lossRatio">0%</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-users"></i> Fraud Rings Detected</h3>
+          <div id="fraudRingsList" style="min-height: 140px;">No active rings</div>
+          <button id="simulateFraudBtn" style="margin-top: 20px; width: 100%;">🚨 Inject Synthetic Fraud Attack</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-chart-simple"></i> Predictive Hotspots (Next 7 Days)</h3>
+        <div>🔴 Velachery (risk +22%) · 🟠 Andheri (risk +15%) · 🟡 Koramangala (risk +8%)</div>
+        <div style="margin-top: 16px;">📍 AI‑driven forecast using weather & traffic data</div>
+      </div>
     </div>
   </div>
 
-  <!-- Admin Dashboard -->
-  <div id="adminView" style="display: none;">
-    <div class="grid-2col">
-      <div class="card">
-        <h3><i class="fas fa-chart-line"></i> Claims & Loss Ratio</h3>
-        <canvas id="claimsChart" height="180" style="width:100%; max-height:200px;"></canvas>
-        <div style="margin-top: 20px;">
-          <div>Today's claims: <strong id="claimsToday">0</strong></div>
-          <div>Fraud prevented: <strong id="fraudPrevented">₹0</strong></div>
-          <div>Loss ratio (7d): <strong id="lossRatio">0%</strong></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3><i class="fas fa-users"></i> Fraud Rings Detected</h3>
-        <div id="fraudRingsList" style="min-height: 100px;">No active rings</div>
-        <button id="simulateFraudBtn" style="margin-top: 20px; width: 100%;">🚨 Simulate GPS Spoofing Attack</button>
-      </div>
-    </div>
-    <div class="card">
-      <h3><i class="fas fa-chart-simple"></i> Predictive Hotspots (Next 7 Days)</h3>
-      <div>🔴 Velachery (risk +22%) · 🟠 Andheri (risk +15%) · 🟡 Koramangala (risk +8%)</div>
-      <div style="margin-top: 16px;">📍 AI‑driven forecast using weather & traffic data</div>
-    </div>
-  </div>
-</div>
+  <script type="module">
+    import * as THREE from 'three';
 
-<script>
-  // ---------- MOCK DATA ----------
-  let riskGrid = [
-    [0.92, 0.85, 0.58, 0.32, 0.21],
-    [0.88, 0.91, 0.73, 0.41, 0.23],
-    [0.67, 0.72, 0.54, 0.35, 0.18],
-    [0.45, 0.53, 0.42, 0.27, 0.14],
-    [0.28, 0.34, 0.26, 0.15, 0.12]
-  ];
-
-  let alerts = [
-    { text: "⚠️ Heavy rain alert in Velachery (52mm in 3h)", time: "2 min ago", type: "weather" },
-    { text: "✅ Auto‑claim approved: ₹324 credited", time: "15 min ago", type: "payout" }
-  ];
-
-  let payouts = [
-    { date: "Mar 18", amount: 324, reason: "Rain disruption" },
-    { date: "Mar 15", amount: 210, reason: "High pollution" },
-    { date: "Mar 10", amount: 450, reason: "Curfew" }
-  ];
-
-  let trustScore = 89;
-  let weeklyPremium = 36;
-  let earningsData = [620, 680, 710, 690, 720, 680, 650];
-
-  // Admin stats
-  let claimsHistory = [8, 12, 15, 18, 22, 25, 30];
-  let claimsToday = 30;
-  let fraudPreventedTotal = 45200;
-  let fraudRings = [];
-
-  let earningsChart = null, claimsChart = null;
-
-  // helper: average risk
-  function getAvgRisk() {
-    const flat = riskGrid.flat();
-    const sum = flat.reduce((a,b)=>a+b,0);
-    return (sum / flat.length).toFixed(2);
-  }
-
-  // update risk grid UI
-  function updateRiskGrid() {
-    const container = document.getElementById('riskGrid');
-    if (!container) return;
-    container.innerHTML = '';
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        const val = riskGrid[i][j];
-        let cls = 'risk-low';
-        if (val >= 0.7) cls = 'risk-high';
-        else if (val >= 0.4) cls = 'risk-medium';
-        const cell = document.createElement('div');
-        cell.className = `grid-cell ${cls}`;
-        cell.textContent = `${Math.round(val*100)}%`;
-        container.appendChild(cell);
-      }
+    // --- 3D BACKGROUND (insane glowing particles) ---
+    const canvas = document.getElementById('bg-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
+    camera.position.y = 5;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = 1500;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      positions[i*3] = (Math.random() - 0.5) * 100;
+      positions[i*3+1] = (Math.random() - 0.5) * 40;
+      positions[i*3+2] = (Math.random() - 0.5) * 60 - 20;
     }
-    const avg = getAvgRisk();
-    document.getElementById('globalRiskBadge').innerHTML = `Risk: ${avg}`;
-    document.getElementById('riskPercent').innerHTML = `${Math.round(avg*100)}%`;
-    const newPremium = Math.round(35 * (0.7 + 0.6 * parseFloat(avg)));
-    weeklyPremium = newPremium;
-    document.getElementById('premiumAmount').innerHTML = `₹${weeklyPremium}`;
-  }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({ color: 0x00aaff, size: 0.2, transparent: true, opacity: 0.6 });
+    const particles = new THREE.Points(particlesGeometry, particleMaterial);
+    scene.add(particles);
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.0005;
+      particles.rotation.x += 0.0003;
+      renderer.render(scene, camera);
+    }
+    animate();
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+  </script>
 
-  function updateAlerts() {
-    const container = document.getElementById('alertList');
-    if (!container) return;
-    container.innerHTML = alerts.slice(0,6).map(a => `
-      <div class="alert-item">
-        <span><i class="fas ${a.type === 'weather' ? 'fa-cloud-rain' : 'fa-credit-card'}"></i> ${a.text}</span>
-        <span class="alert-time">${a.time}</span>
-      </div>
-    `).join('');
-  }
-
-  function updatePayouts() {
-    const container = document.getElementById('payoutList');
-    if (!container) return;
-    container.innerHTML = payouts.map(p => `
-      <div class="payout-item">
-        <span>${p.date}</span>
-        <span><strong>₹${p.amount}</strong></span>
-        <span>${p.reason}</span>
-      </div>
-    `).join('');
-  }
-
-  function updateTrustScore() {
-    document.getElementById('trustScore').innerHTML = trustScore;
-    const desc = trustScore >= 70 ? "✅ High trust – auto‑approval" : (trustScore >= 50 ? "⚠️ Medium trust – step‑up verification" : "❌ Low trust – manual review");
-    document.getElementById('trustDesc').innerHTML = desc;
-  }
-
-  function updateSignalPanel() {
-    const signals = [
-      "GPS+CellTower", "Wi‑Fi BSSID", "Accelerometer", "Gyroscope", "Barometer",
-      "Ambient Light", "Network Latency", "Battery Drain", "Device Integrity", "Historical Grid"
+  <script>
+    // ---------- APP STATE ----------
+    let riskGrid = [
+      [0.92, 0.85, 0.58, 0.32, 0.21],
+      [0.88, 0.91, 0.73, 0.41, 0.23],
+      [0.67, 0.72, 0.54, 0.35, 0.18],
+      [0.45, 0.53, 0.42, 0.27, 0.14],
+      [0.28, 0.34, 0.26, 0.15, 0.12]
     ];
-    const container = document.getElementById('signalGrid');
-    if (container) {
-      container.innerHTML = signals.map(s => `<div class="signal"><span>${s}</span><span style="color:#34c759;">✓ genuine</span></div>`).join('');
-    }
-  }
+    let alerts = [
+      { text: "⚠️ Cyclonic alert: Velachery 52mm/3h", time: "2 min ago", type: "weather" },
+      { text: "✅ Auto‑claim: ₹324 credited", time: "15 min ago", type: "payout" }
+    ];
+    let payouts = [
+      { date: "Mar 18", amount: 324, reason: "Rain disruption" },
+      { date: "Mar 15", amount: 210, reason: "High pollution" },
+      { date: "Mar 10", amount: 450, reason: "Curfew" },
+      { date: "Mar 5", amount: 180, reason: "Heat wave" }
+    ];
+    let trustScore = 89;
+    let weeklyPremium = 36;
+    let earningsData = [620, 680, 710, 690, 720, 680, 650];
+    let claimsHistory = [8, 12, 15, 18, 22, 25, 30];
+    let claimsToday = 30;
+    let fraudPreventedTotal = 45200;
+    let fraudRings = [];
+    let alertsMuted = false;
 
-  function showToast(msg, type="info") {
-    const toast = document.createElement('div');
-    toast.className = 'toast-notify';
-    let icon = 'info-circle';
-    if (type === 'success') icon = 'check-circle';
-    if (type === 'warning') icon = 'exclamation-triangle';
-    toast.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-  }
+    let earningsChart, claimsChart, radarChart;
+    let gridCoarse = false;
 
-  // manual rain simulation (increase risk in all cells)
-  function simulateRain() {
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        riskGrid[i][j] = Math.min(1, riskGrid[i][j] + 0.2);
-      }
-    }
-    updateRiskGrid();
-    const newAlert = { text: "🌧️ Manual rain simulation – high risk detected. Auto‑claim will be evaluated.", time: "just now", type: "weather" };
-    alerts.unshift(newAlert);
-    updateAlerts();
-    showToast("⚠️ Rain simulation triggered – risk increased", "warning");
-    // trigger auto‑claim if high risk exists
-    if (riskGrid.some(row => row.some(v => v > 0.8))) {
-      const amount = Math.floor(Math.random() * 400) + 300;
-      const claimAlert = { text: `⚡ Auto‑claim triggered! ₹${amount} credited.`, time: "just now", type: "payout" };
-      alerts.unshift(claimAlert);
-      payouts.unshift({ date: new Date().toLocaleDateString(), amount: amount, reason: "Rain simulation" });
-      if (payouts.length > 5) payouts.pop();
-      updateAlerts();
-      updatePayouts();
-      showToast(`✅ Auto‑payout ₹${amount} sent`, "success");
-      trustScore = Math.min(100, trustScore + 5);
-      updateTrustScore();
-    }
-  }
-
-  // report disruption (worker)
-  function reportDisruption() {
-    const msg = { text: "📢 You reported waterlogging in Velachery. +2 others confirmed. Risk updated.", time: "just now", type: "weather" };
-    alerts.unshift(msg);
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        if (riskGrid[i][j] < 0.9) riskGrid[i][j] = Math.min(1, riskGrid[i][j] + 0.08);
-      }
-    }
-    updateRiskGrid();
-    updateAlerts();
-    showToast("Report submitted – community verified. Risk increased.", "info");
-  }
-
-  // real‑time simulation (parametric triggers)
-  let simInterval;
-  function startSimulation() {
-    if (simInterval) clearInterval(simInterval);
-    simInterval = setInterval(() => {
-      // random risk drift
-      for (let i = 0; i < 3; i++) {
-        const x = Math.floor(Math.random() * 5);
-        const y = Math.floor(Math.random() * 5);
-        let delta = (Math.random() - 0.5) * 0.12;
-        let newVal = riskGrid[x][y] + delta;
-        riskGrid[x][y] = Math.min(1, Math.max(0, newVal));
-      }
-      updateRiskGrid();
-
-      // parametric trigger
-      const highRisk = riskGrid.some(row => row.some(v => v > 0.8));
-      if (highRisk && Math.random() < 0.35) {
-        const amount = Math.floor(Math.random() * 500) + 200;
-        const alertMsg = { text: `⚡ Auto‑claim triggered! ₹${amount} credited.`, time: "just now", type: "payout" };
-        alerts.unshift(alertMsg);
-        payouts.unshift({ date: new Date().toLocaleDateString(), amount: amount, reason: "Weather disruption" });
-        if (payouts.length > 5) payouts.pop();
-        updateAlerts();
-        updatePayouts();
-        trustScore = Math.min(100, trustScore + 3);
-        updateTrustScore();
-        showToast(`✅ Auto‑payout ₹${amount} sent!`, "success");
-      }
-
-      // random weather alert
-      if (Math.random() < 0.2) {
-        const weatherAlert = { text: "🌧️ Heavy rain warning in Velachery (updated risk)", time: "just now", type: "weather" };
-        alerts.unshift(weatherAlert);
-        if (alerts.length > 7) alerts.pop();
-        updateAlerts();
-      }
-
-      if (document.getElementById('adminView').style.display !== 'none') {
-        updateAdminUI();
-      }
-    }, 7000);
-  }
-
-  // admin dashboard UI
-  function updateAdminUI() {
-    document.getElementById('claimsToday').innerHTML = claimsToday;
-    document.getElementById('fraudPrevented').innerHTML = `₹${fraudPreventedTotal}`;
-    const avgClaims = claimsHistory.reduce((a,b)=>a+b,0)/claimsHistory.length;
-    const lossRatio = (claimsToday * 350) / (avgClaims * 350 + 10000) * 100;
-    document.getElementById('lossRatio').innerHTML = `${Math.round(lossRatio)}%`;
-
-    if (fraudRings.length > 0) {
-      document.getElementById('fraudRingsList').innerHTML = fraudRings.map(r => `<div>🔗 Ring of ${r.members} workers (score ${r.score})</div>`).join('');
-    } else {
-      document.getElementById('fraudRingsList').innerHTML = 'No active rings';
+    // Helper
+    function getAvgRisk() {
+      const flat = riskGrid.flat();
+      const sum = flat.reduce((a,b)=>a+b,0);
+      return (sum / flat.length).toFixed(2);
     }
 
-    if (claimsChart) {
-      claimsChart.data.datasets[0].data = claimsHistory;
-      claimsChart.update();
-    }
-  }
-
-  function simulateFraud() {
-    const newRing = { members: Math.floor(Math.random() * 80) + 20, score: Math.floor(Math.random() * 40) + 60 };
-    fraudRings.push(newRing);
-    fraudPreventedTotal += 15300;
-    claimsToday += 3;
-    const fraudAlert = { text: "🚨 Fraud attempt blocked (GPS spoofing) – Trust Score protected", time: "just now", type: "weather" };
-    alerts.unshift(fraudAlert);
-    updateAlerts();
-    updateAdminUI();
-    showToast("🚨 Simulated fraud ring detected – ₹15,300 prevented!", "warning");
-    trustScore = Math.max(40, trustScore - 10);
-    updateTrustScore();
-  }
-
-  // role switcher
-  function initRoleSwitch() {
-    const btns = document.querySelectorAll('.role-btn');
-    const workerDiv = document.getElementById('workerView');
-    const adminDiv = document.getElementById('adminView');
-    btns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const role = btn.getAttribute('data-role');
-        if (role === 'worker') {
-          workerDiv.style.display = 'block';
-          adminDiv.style.display = 'none';
-        } else {
-          workerDiv.style.display = 'none';
-          adminDiv.style.display = 'block';
-          updateAdminUI();
+    function updateRiskGridUI() {
+      const container = document.getElementById('riskGrid');
+      if (!container) return;
+      if (gridCoarse) return; // coarse view handled separately
+      container.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          const val = riskGrid[i][j];
+          let cls = 'risk-low';
+          if (val >= 0.7) cls = 'risk-high';
+          else if (val >= 0.4) cls = 'risk-medium';
+          const cell = document.createElement('div');
+          cell.className = `grid-cell ${cls}`;
+          cell.textContent = `${Math.round(val*100)}%`;
+          cell.addEventListener('click', () => {
+            riskGrid[i][j] = Math.min(1, riskGrid[i][j] + 0.15);
+            updateRiskGridUI();
+            addAlert(`📍 Local risk spike at grid (${i+1},${j+1})`, "weather");
+          });
+          container.appendChild(cell);
         }
-      });
-    });
-  }
-
-  // charts
-  function initCharts() {
-    const ctxEarnings = document.getElementById('earningsChart').getContext('2d');
-    earningsChart = new Chart(ctxEarnings, {
-      type: 'line',
-      data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [{ label: 'Predicted Earnings (₹)', data: earningsData, borderColor: '#00ffaa', backgroundColor: 'rgba(0,255,170,0.1)', tension: 0.4, fill: true }]
-      },
-      options: { responsive: true, maintainAspectRatio: true }
-    });
-    const ctxClaims = document.getElementById('claimsChart').getContext('2d');
-    claimsChart = new Chart(ctxClaims, {
-      type: 'line',
-      data: {
-        labels: ['Mar 14', 'Mar 15', 'Mar 16', 'Mar 17', 'Mar 18', 'Mar 19', 'Today'],
-        datasets: [{ label: 'Claims per day', data: claimsHistory, borderColor: '#ff3b30', backgroundColor: 'rgba(255,59,48,0.1)', tension: 0.3, fill: true }]
-      },
-      options: { responsive: true, maintainAspectRatio: true }
-    });
-  }
-
-  // floating particles
-  function createParticles() {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 60; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      const size = Math.random() * 6 + 2;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animationDuration = `${Math.random() * 8 + 4}s`;
-      particle.style.animationDelay = `${Math.random() * 8}s`;
-      container.appendChild(particle);
+      }
+      const avg = getAvgRisk();
+      document.getElementById('globalRiskBadge').innerHTML = `Risk: ${avg}`;
+      document.getElementById('riskPercent').innerHTML = `${Math.round(avg*100)}%`;
+      const newPremium = Math.round(35 * (0.7 + 0.6 * parseFloat(avg)));
+      weeklyPremium = newPremium;
+      document.getElementById('premiumAmount').innerHTML = `₹${weeklyPremium}`;
     }
-  }
 
-  // Event listeners
-  document.getElementById('reportBtn').addEventListener('click', reportDisruption);
-  document.getElementById('simulateRainBtn').addEventListener('click', simulateRain);
-  document.getElementById('simulateFraudBtn').addEventListener('click', simulateFraud);
+    function addAlert(text, type = "weather") {
+      if (alertsMuted) return;
+      alerts.unshift({ text, time: "just now", type });
+      if (alerts.length > 8) alerts.pop();
+      updateAlertsUI();
+      showToast(text, "info");
+    }
 
-  // Initialization
-  updateRiskGrid();
-  updateAlerts();
-  updatePayouts();
-  updateTrustScore();
-  updateSignalPanel();
-  initRoleSwitch();
-  initCharts();
-  startSimulation();
-  createParticles();
-  updateAdminUI();
-</script>
+    function updateAlertsUI() {
+      const container = document.getElementById('alertList');
+      if (!container) return;
+      container.innerHTML = alerts.slice(0,6).map(a => `
+        <div class="alert-item">
+          <span><i class="fas ${a.type === 'weather' ? 'fa-cloud-rain' : 'fa-credit-card'}"></i> ${a.text}</span>
+          <span class="alert-time">${a.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function updatePayoutsUI() {
+      const container = document.getElementById('payoutList');
+      if (!container) return;
+      container.innerHTML = payouts.map(p => `
+        <div class="payout-item">
+          <span>${p.date}</span>
+          <span><strong>₹${p.amount}</strong></span>
+          <span>${p.reason}</span>
+        </div>
+      `).join('');
+    }
+
+    function updateTrustScoreUI() {
+      document.getElementById('trustScore').innerHTML = trustScore;
+      const desc = trustScore >= 70 ? "✅ High trust – auto‑approval" : (trustScore >= 50 ? "⚠️ Medium trust – step‑up verification" : "❌ Low trust – manual review");
+      document.getElementById('trustDesc').innerHTML = desc;
+    }
+
+    function updateSignalPanel() {
+      const signals = [
+        "GPS+CellTower", "Wi‑Fi BSSID", "Accelerometer", "Gyroscope", "Barometer",
+        "Ambient Light", "Network Latency", "Battery Drain", "Device Integrity", "Historical Grid"
+      ];
+      const container = document.getElementById('signalGrid');
+      if (container) {
+        container.innerHTML = signals.map(s => `<div class="signal"><span>${s}</span><span style="color:#0ff;">✓ verified</span></div>`).join('');
+      }
+    }
+
+    function showToast(msg, type = "info") {
+      const toast = document.createElement('div');
+      toast.className = 'toast-notify';
+      let icon = 'info-circle';
+      if (type === 'success') icon = 'check-circle';
+      if (type === 'warning') icon = 'exclamation-triangle';
+      toast.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function simulateRain() {
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          riskGrid[i][j] = Math.min(1, riskGrid[i][j] + 0.2);
+        }
+      }
+      updateRiskGridUI();
+      addAlert("🌊 Torrential rain simulation – risk surge detected", "weather");
+      if (riskGrid.some(row => row.some(v => v > 0.8))) {
+        const amount = Math.floor(Math.random() * 400) + 300;
+        addAlert(`⚡ Auto‑claim triggered! ₹${amount} credited instantly.`, "payout");
+        payouts.unshift({ date: new Date().toLocaleDateString(), amount, reason: "Rain simulation" });
+        if (payouts.length > 5) payouts.pop();
+        updatePayoutsUI();
+        trustScore = Math.min(100, trustScore + 5);
+        updateTrustScoreUI();
+        showToast(`✅ Auto‑payout ₹${amount} sent`, "success");
+      }
+    }
+
+    function reportDisruption() {
+      addAlert("📢 You reported waterlogging in Velachery. +2 confirmations. Risk escalated.", "weather");
+      for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+          if (riskGrid[i][j] < 0.9) riskGrid[i][j] = Math.min(1, riskGrid[i][j] + 0.08);
+        }
+      }
+      updateRiskGridUI();
+      showToast("Report verified by consensus – zone risk updated", "info");
+    }
+
+    function toggleGridResolution() {
+      gridCoarse = !gridCoarse;
+      const container = document.getElementById('riskGrid');
+      if (gridCoarse) {
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = "repeat(2, 1fr)";
+        container.style.gap = "20px";
+        container.innerHTML = '';
+        for (let i = 0; i < 2; i++) {
+          for (let j = 0; j < 2; j++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell risk-low';
+            cell.textContent = "1km";
+            cell.style.background = "#34c759";
+            container.appendChild(cell);
+          }
+        }
+        showToast("Coarse grid active (1km) – computational efficiency mode.", "info");
+      } else {
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = "repeat(5, 1fr)";
+        container.style.gap = "12px";
+        updateRiskGridUI();
+        showToast("Adaptive grid restored – hyperlocal 100m precision.", "info");
+      }
+    }
+
+    // real-time simulation
+    let simInterval;
+    function startSimulation() {
+      if (simInterval) clearInterval(simInterval);
+      simInterval = setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+          const x = Math.floor(Math.random() * 5);
+          const y = Math.floor(Math.random() * 5);
+          let delta = (Math.random() - 0.5) * 0.12;
+          riskGrid[x][y] = Math.min(1, Math.max(0, riskGrid[x][y] + delta));
+        }
+        updateRiskGridUI();
+        const highRisk = riskGrid.some(row => row.some(v => v > 0.8));
+        if (highRisk && Math.random() < 0.35) {
+          const amount = Math.floor(Math.random() * 500) + 200;
+          addAlert(`⚡ Parametric trigger: ₹${amount} auto‑payout`, "payout");
+          payouts.unshift({ date: new Date().toLocaleDateString(), amount, reason: "Weather disruption" });
+          if (payouts.length > 5) payouts.pop();
+          updatePayoutsUI();
+          trustScore = Math.min(100, trustScore + 3);
+          updateTrustScoreUI();
+          showToast(`✅ Payout ₹${amount} processed`, "success");
+        }
+        if (Math.random() < 0.2) {
+          addAlert("🌧️ Weather system update: heavy rain warning", "weather");
+        }
+        if (document.getElementById('adminView').style.display !== 'none') updateAdminUI();
+      }, 7000);
+    }
+
+    // admin
+    function updateAdminUI() {
+      document.getElementById('claimsToday').innerHTML = claimsToday;
+      document.getElementById('fraudPrevented').innerHTML = `₹${fraudPreventedTotal}`;
+      const avgClaims = claimsHistory.reduce((a,b)=>a+b,0)/claimsHistory.length;
+      const lossRatio = (claimsToday * 350) / (avgClaims * 350 + 10000) * 100;
+      document.getElementById('lossRatio').innerHTML = `${Math.round(lossRatio)}%`;
+      if (fraudRings.length > 0) {
+        document.getElementById('fraudRingsList').innerHTML = fraudRings.map(r => `<div class="fraud-ring">🔗 Ring of ${r.members} workers (score ${r.score})</div>`).join('');
+      } else {
+        document.getElementById('fraudRingsList').innerHTML = 'No active rings';
+      }
+      if (claimsChart) claimsChart.data.datasets[0].data = claimsHistory, claimsChart.update();
+    }
+
+    function simulateFraud() {
+      const newRing = { members: Math.floor(Math.random() * 80) + 20, score: Math.floor(Math.random() * 40) + 60 };
+      fraudRings.push(newRing);
+      fraudPreventedTotal += 15300;
+      claimsToday += 3;
+      addAlert("🚨 AI blocked GPS spoofing attack – fraud ring neutralized", "weather");
+      updateAdminUI();
+      showToast("Synthetic fraud ring detected & prevented", "warning");
+      trustScore = Math.max(40, trustScore - 10);
+      updateTrustScoreUI();
+    }
+
+    // Role switch
+    function initRoleSwitch() {
+      const btns = document.querySelectorAll('.role-btn');
+      const workerDiv = document.getElementById('workerView');
+      const adminDiv = document.getElementById('adminView');
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const role = btn.getAttribute('data-role');
+          if (role === 'worker') {
+            workerDiv.style.display = 'block';
+            adminDiv.style.display = 'none';
+          } else {
+            workerDiv.style.display = 'none';
+            adminDiv.style.display = 'block';
+            updateAdminUI();
+          }
+        });
+      });
+    }
+
+    // Charts
+    function initCharts() {
+      const ctxEarnings = document.getElementById('earningsChart').getContext('2d');
+      earningsChart = new Chart(ctxEarnings, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{ label: 'Predicted Earnings (₹)', data: earningsData, borderColor: '#0af', backgroundColor: 'rgba(0,170,255,0.1)', tension: 0.4, fill: true, pointBackgroundColor: '#0af' }]
+        },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#fff' } } } }
+      });
+      const ctxClaims = document.getElementById('claimsChart').getContext('2d');
+      claimsChart = new Chart(ctxClaims, {
+        type: 'line',
+        data: {
+          labels: ['Mar 14', 'Mar 15', 'Mar 16', 'Mar 17', 'Mar 18', 'Mar 19', 'Today'],
+          datasets: [{ label: 'Claims per day', data: claimsHistory, borderColor: '#ff3b30', backgroundColor: 'rgba(255,59,48,0.1)', tension: 0.3, fill: true }]
+        },
+        options: { responsive: true, maintainAspectRatio: true }
+      });
+      // radar chart stub for syndicate
+      const radarCtx = document.getElementById('radarCanvas')?.getContext('2d');
+      if (radarCtx) {
+        radarChart = new Chart(radarCtx, {
+          type: 'radar',
+          data: {
+            labels: ['GPS Spoof', 'Device Clone', 'Collusion', 'Synthetic ID', 'Speed Anomaly'],
+            datasets: [{ label: 'Threat Level', data: [72, 45, 68, 30, 88], backgroundColor: 'rgba(0,170,255,0.2)', borderColor: '#0af', pointBackgroundColor: '#0af' }]
+          },
+          options: { responsive: true, maintainAspectRatio: true, scales: { r: { ticks: { color: '#ccc', backdropColor: 'transparent' }, grid: { color: '#0af22' } } } }
+        });
+      }
+    }
+
+    function toggleAlerts() {
+      alertsMuted = !alertsMuted;
+      showToast(alertsMuted ? "Alerts muted" : "Alerts unmuted", "info");
+      document.getElementById('toggleAlertsBtn').innerHTML = alertsMuted ? '<i class="fas fa-bell"></i> Unmute Alerts' : '<i class="fas fa-bell-slash"></i> Mute Alerts';
+    }
+
+    // Event listeners
+    document.getElementById('reportBtn').addEventListener('click', reportDisruption);
+    document.getElementById('simulateRainBtn').addEventListener('click', simulateRain);
+    document.getElementById('simulateFraudBtn').addEventListener('click', simulateFraud);
+    document.getElementById('toggleGridBtn').addEventListener('click', toggleGridResolution);
+    document.getElementById('toggleAlertsBtn').addEventListener('click', toggleAlerts);
+
+    // Init
+    updateRiskGridUI();
+    updateAlertsUI();
+    updatePayoutsUI();
+    updateTrustScoreUI();
+    updateSignalPanel();
+    initRoleSwitch();
+    initCharts();
+    startSimulation();
+    updateAdminUI();
+    document.getElementById('fraudSavings').innerHTML = `₹${fraudPreventedTotal}`;
+    document.getElementById('trustIntegrity').innerHTML = '99.2%';
+  </script>
 </body>
 </html>
 ```
